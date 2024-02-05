@@ -9,6 +9,15 @@ import yaml
 
 from shortGPT.config.api_db import ApiKeyManager
 
+import httpx
+from openai import OpenAI
+
+client = OpenAI(
+  http_client=httpx.Client(
+    follow_redirects=True
+  )
+)
+
 
 def num_tokens_from_messages(texts, model="gpt-3.5-turbo-0301"):
     """Returns the number of tokens used by a list of messages."""
@@ -70,6 +79,7 @@ def open_file(filepath):
 
 
 def gpt3Turbo_completion(chat_prompt="", system="You are an AI that can give the answer to anything", temp=0.7, model="gpt-3.5-turbo", max_tokens=1000, remove_nl=True, conversation=None):
+    openai.api_base = "http://localhost:8090/v1"
     openai.api_key = ApiKeyManager.get_api_key("OPENAI")
     max_retry = 5
     retry = 0
@@ -82,7 +92,7 @@ def gpt3Turbo_completion(chat_prompt="", system="You are an AI that can give the
                     {"role": "system", "content": system},
                     {"role": "user", "content": chat_prompt}
                 ]
-            response = openai.ChatCompletion.create(
+            response = client.ChatCompletion.create(
                 model=model,
                 messages=messages,
                 max_tokens=max_tokens,
