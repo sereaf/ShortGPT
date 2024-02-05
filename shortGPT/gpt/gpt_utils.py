@@ -13,7 +13,10 @@ import httpx
 from openai import OpenAI
 
 client = OpenAI(
+
   http_client=httpx.Client(
+    base_url="http://localhost:8090/v1", 
+    api_key=ApiKeyManager.get_api_key("OPENAI"),
     follow_redirects=True
   )
 )
@@ -79,7 +82,6 @@ def open_file(filepath):
 
 
 def gpt3Turbo_completion(chat_prompt="", system="You are an AI that can give the answer to anything", temp=0.7, model="gpt-3.5-turbo", max_tokens=1000, remove_nl=True, conversation=None):
-    openai.api_base = "http://localhost:8090/v1"
     openai.api_key = ApiKeyManager.get_api_key("OPENAI")
     max_retry = 5
     retry = 0
@@ -92,7 +94,7 @@ def gpt3Turbo_completion(chat_prompt="", system="You are an AI that can give the
                     {"role": "system", "content": system},
                     {"role": "user", "content": chat_prompt}
                 ]
-            response = client.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model=model,
                 messages=messages,
                 max_tokens=max_tokens,
