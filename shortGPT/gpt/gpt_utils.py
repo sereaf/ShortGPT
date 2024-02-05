@@ -13,10 +13,9 @@ import httpx
 from openai import OpenAI
 
 client = OpenAI(
-
+  base_url="http://localhost:8090/v1", 
+  api_key=ApiKeyManager.get_api_key("OPENAI"),
   http_client=httpx.Client(
-    base_url="http://localhost:8090/v1", 
-    api_key=ApiKeyManager.get_api_key("OPENAI"),
     follow_redirects=True
   )
 )
