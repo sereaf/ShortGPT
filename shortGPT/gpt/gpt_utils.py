@@ -13,7 +13,7 @@ import httpx
 from openai import OpenAI
 
 client = OpenAI(
-  base_url="http://localhost:8090/v1/", 
+  base_url="http://0.0.0.0:8090/v1/", 
   api_key=ApiKeyManager.get_api_key("OPENAI"),
   http_client=httpx.Client(
     follow_redirects=True
@@ -98,7 +98,8 @@ def gpt3Turbo_completion(chat_prompt="", system="You are an AI that can give the
                 messages=messages,
                 max_tokens=max_tokens,
                 temperature=temp,)
-            text = response.choices[0].text.strip()
+            text = response.choices[0].message.content.strip()
+            print(text)
             if remove_nl:
                 text = re.sub('\s+', ' ', text)
             filename = '%s_gpt3.txt' % time()
